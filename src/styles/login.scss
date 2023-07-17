@@ -1,0 +1,91 @@
+$font-grey: #878a92;
+
+#__next {
+  height: 100%;
+  width: 100%;
+}
+main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 50px 0;
+  h1 {
+    font-weight: 500;
+    margin-left: 10px;
+  }
+}
+.signInMessage {
+  text-align: center;
+  h2 {
+    margin: 10px 0;
+    font-weight: 500;
+  }
+  p {
+    color: $font-grey;
+  }
+}
+form {
+  margin: 50px 0;
+  padding: 50px;
+  background-color: white;
+  width: 550px;
+  min-height: 450px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-radius: 5px;
+  label {
+    padding: 10px 0;
+    display: inline-block;
+    border-radius: 5px;
+  }
+  input {
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #f0eff5;
+  }
+  .passTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    a {
+      color: $font-grey;
+    }
+  }
+  .formBlock {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  button {
+    background-color: #7269ef;
+    color: white;
+    border: none;
+    padding: 15px 0;
+    border-radius: 5px;
+  }
+  .rememberMe {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 20px 0;
+    label {
+      padding: 0;
+      margin-left: 10px;
+    }
+  }
+}
+.signUpRedirect {
+  margin: 20px 0;
+  a {
+    color: #7269ef;
+    display: inline-block;
+    padding: 0 5px;
+  }
+}

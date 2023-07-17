@@ -1,0 +1,202 @@
+.messagesMain {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #f5f7fb;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 30px;
+}
+.messageInput {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px;
+}
+.messageInput input {
+  padding: 15px;
+  width: 70%;
+  border: none;
+  border-radius: 10px;
+  background-color: #e6ebf5;
+}
+.messageInput {
+  svg {
+    color: #7269ef;
+    width: 20px;
+    height: 20px;
+    margin: 0 30px;
+  }
+  button {
+    background-color: transparent;
+    border: none;
+    border-radius: 10px;
+    padding: 0;
+    margin: 0;
+    height: 70px;
+    width: 70px;
+    svg {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  }
+}
+.emojiDiv {
+  position: relative;
+  aside.EmojiPickerReact {
+    position: absolute !important;
+    top: -450px;
+  }
+}
+.messageView {
+  position: relative;
+  height: 100%;
+  overflow-y: scroll;
+  border-top: 2px solid #f0eff5;
+  border-bottom: 2px solid #f0eff5;
+  padding: 0 30px;
+  display: flex;
+  flex-direction: column;
+  // justify-content: flex-end;
+  align-items: center;
+  li {
+    margin-bottom: 10px;
+    animation: fadeIn 0.3s linear;
+    align-items: flex-end;
+  }
+  & > :first-child {
+    margin-top: auto;
+  }
+}
+.myMessage {
+  margin: 2px 0;
+  padding: 2px;
+  text-align: right;
+  margin-left: auto;
+  min-width: 250px;
+  max-width: 50%;
+  flex-direction: row-reverse;
+  .bubbleAvatar {
+    margin-left: 20px;
+  }
+}
+.participantMessage {
+  margin: 2px 0;
+  padding: 2px;
+  text-align: left;
+  margin-right: auto;
+  min-width: 250px;
+  max-width: 50%;
+  .bubbleAvatar {
+    margin-right: 20px;
+  }
+}
+.myMessage,
+.participantMessage {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.myMargin {
+  margin-right: 70px;
+}
+.participantMargin {
+  margin-left: 70px;
+}
+.myMessage .messageText {
+  display: inline-block;
+  background-color: #f0eff5;
+  padding: 20px;
+  margin: 5px;
+  &::before {
+    content: "";
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid #f0eff5;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #f0eff5;
+    bottom: -10px;
+    left: auto;
+    position: absolute;
+    right: 0;
+    transform: rotate(90deg);
+  }
+}
+.myMessage .messageText span {
+  text-align: left;
+}
+
+.participantMessage .messageText {
+  display: inline-block;
+  background-color: #7269ef;
+  color: white;
+  padding: 20px;
+  margin: 5px;
+  &::before {
+    content: "";
+    border-bottom: 10px solid transparent;
+    border-left: 10px solid #7269ef;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #7269ef;
+    bottom: -10px;
+    left: 0;
+    position: absolute;
+    right: auto;
+  }
+}
+.bubbleFirstLast {
+  margin: 5px;
+}
+.bubbleAvatar {
+  height: 50px;
+  width: 50px;
+  background-color: #9391b3;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.messageText span {
+  display: block;
+  text-align: right;
+  padding-top: 20px;
+  color: #a5a8b3;
+  font-size: 14px;
+}
+.messageText {
+  border-radius: 10px;
+  position: relative;
+}
+.messageSender {
+  color: black;
+}
+.bubbleButton {
+  position: absolute;
+  background-color: transparent;
+  border: none;
+  transform: rotate(90deg);
+  cursor: pointer;
+}
+.myButton {
+  left: -30px;
+  top: 0;
+}
+.participantButton {
+  right: -30px;
+  top: 0;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

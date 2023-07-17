@@ -1,0 +1,17 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.headerAvatar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  .participantNumber {
+    margin-left: 10px;
+  }
+  .groupsCards {
+    width: auto;
+    padding: 0;
+  }
+}

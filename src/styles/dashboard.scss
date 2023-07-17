@@ -1,0 +1,349 @@
+.dashboard {
+  height: 100%;
+  width: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.sidebar {
+  height: 100%;
+  width: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f5f7fb;
+  padding: 30px 0;
+}
+.sidebarOptions {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: 400px;
+  label {
+    padding: 20px;
+    position: relative;
+    display: inline-block;
+    border-radius: 10px;
+    color: #878a92;
+    &:hover {
+      cursor: pointer;
+      color: #7269ef;
+    }
+  }
+  input[type="radio"]:checked + label {
+    color: #7269ef;
+    background-color: #e6ebf5;
+  }
+  svg {
+    width: 30px;
+    height: 30px;
+  }
+}
+.sidebarExtras {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  label {
+    padding: 20px;
+    position: relative;
+    display: inline-block;
+    border-radius: 10px;
+    color: #878a92;
+    &:hover {
+      cursor: pointer;
+      color: #7269ef;
+    }
+  }
+  input[type="radio"]:checked + label {
+    color: #7269ef;
+    background-color: #e6ebf5;
+  }
+  svg {
+    width: 30px;
+    height: 30px;
+  }
+}
+.sidebarView {
+  height: 100%;
+  width: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 30px 0;
+  background-color: #f0eff5;
+}
+
+/* FOR GROUPS */
+
+.groupsHeading {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  button {
+    background-color: yellow;
+  }
+  input {
+    padding: 15px;
+  }
+}
+.groupsHeading input {
+  width: 100%;
+}
+.groupsRecent {
+  margin-bottom: auto;
+  margin-top: 100px;
+  padding: 0 10px;
+  animation: fadeIn 1s linear;
+  width: 100%;
+}
+.chatsSearch {
+  width: 100%;
+  padding: 0 20px;
+  .groupIcon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    width: 40px;
+    background-color: #e3e1fc;
+    border-radius: 50%;
+    margin-right: 10px;
+    color: #7269ef;
+    font-weight: bold;
+  }
+  .searchContacts {
+    display: flex;
+    margin-top: 20px;
+    width: 100%;
+  }
+}
+.groupsCards {
+  width: 100%;
+  padding: 20px;
+  border-radius: 10px;
+  transition: all 0.2s linear;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 10px 0;
+  position: relative;
+  cursor: pointer;
+  &:hover {
+    background-color: #e6ebf5;
+  }
+  .groupIcon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    width: 40px;
+    background-color: #e3e1fc;
+    border-radius: 50%;
+    margin-right: 10px;
+    color: #7269ef;
+    font-weight: bold;
+  }
+  .notification {
+    position: absolute;
+    right: 0;
+    top: 15px;
+    padding: 5px 15px;
+    border-radius: 10px;
+    background-color: rgba(239,71,111,.18);
+    font-size: 12px;
+    color: #ef476f;
+  }
+  .lastTime {
+    position: absolute;
+    right: 20px;
+    top: 24px;
+    font-size: 12px;
+  }
+}
+.selectedGroup {
+  background-color: #e6ebf5;
+  color: #7269ef;
+}
+.groupNameP {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.newGroupPopup {
+  position: absolute;
+  z-index: 100;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(5px);
+}
+.createGroup {
+  padding: 0 100px;
+  background-color: #878a92;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  label {
+    margin-top: 20px;
+  }
+  input {
+    min-width: 300px;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 10px;
+  }
+  div {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px;
+  }
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+// FOR PROFILE
+.profileOptions {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.img {
+  background-color: #878a92;
+  width: 50px;
+  height: 50px;
+  padding: 50px;
+  border-radius: 50%;
+  text-align: center;
+  margin-bottom: 30px;
+}
+.avatar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin: 50px 0;
+  p {
+    font-weight: bold;
+  }
+}
+.profName,
+.profEmail {
+  display: flex;
+  flex-direction: column;
+}
+.profileHeading {
+  margin: 20px 0;
+}
+.accordionAbout {
+  display: flex !important;
+  align-items: center !important;
+  svg {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+  }
+}
+// FOR CHATS
+.chatsRecent {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  h3 {
+    margin: 30px 0;
+  }
+  .recentCards {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin: 2px 0;
+    padding: 10px;
+    margin-bottom: auto;
+    margin-top: 50px;
+    animation: fadeIn 1s linear;
+    width: 100%;
+    li {
+      margin: 2px 0;
+      justify-content: flex-start;
+      align-items: center;
+    }
+    div {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+    .groupNameP {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .lastMessage {
+      color: #7a7f9a;
+      margin-top: 5px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      max-width: 200px;
+    }
+    .groupIcon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  .timestamp {
+    margin-left: auto;
+  }
+  .recentIcon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    width: 40px;
+    background-color: #e3e1fc;
+    border-radius: 50%;
+    margin-right: 10px;
+    color: #7269ef;
+    font-weight: bold;
+  }
+}
+// FOR CONTACTS
+.viewContacts {
+  width: 100%;
+  margin-top: 50px;
+  padding: 20px;
+}
+.contactLetter {
+  color: #7269ef;
+  margin: 20px 0;
+}
+.contactInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+}
