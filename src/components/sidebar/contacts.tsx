@@ -243,7 +243,7 @@ const Contacts = () => {
       .select("private_group_id, created_at")
       .neq("private_group_id", groupID);
     if (lastVisited && messages) {
-      console.log(lastVisited, messages);
+
       const counts: any = [];
       // console.log(groupedContacts);
       messages.forEach((message) => {
@@ -263,10 +263,9 @@ const Contacts = () => {
           }
         }
       });
-      console.log("last visited", lastVisited);
-      console.log("messages", messages);
+
       setNotifications(counts);
-      console.log(notifications);
+
       return counts;
     }
   };
@@ -350,7 +349,7 @@ const Contacts = () => {
                         key={index + name.name}
                       >
                         <p>{name.name}</p>
-                        {notifications[name?.group] !== undefined &&
+                        {notifications &&
                         notifications[name.group] > 0 &&
                         notifications[name.group] !== groupID ? (
                           <p className="dmNotification">

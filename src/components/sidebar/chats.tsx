@@ -59,10 +59,27 @@ const Chats = () => {
 
   useEffect(() => {
     getGroups();
+    supabase
+      // hardcoded group ID on listener
+      .channel(`direct_messages`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "direct_messages",
+          // filter: `private_group_id=eq.${groupID}`,
+        },
+        () => {
+          getGroups()
+
+        }
+      )
+      .subscribe();
   }, []);
 
   const handleGroupSelect = (e: any, group: any, index: any) => {
-    dispatch(setPrivate(false))
+    dispatch(setPrivate(false));
     dispatch(setGroupID(group.id));
     dispatch(setGroupName(group.name));
   };

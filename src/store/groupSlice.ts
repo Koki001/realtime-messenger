@@ -5,7 +5,7 @@ import { Group } from "@/types";
 
 const initialState: Group = {
   id: "1d6c3f19-ab40-4c3f-b8eb-8a38495a45df",
-  name: "Chatvia Welcome Group",
+  name: "ChatSpace Welcome Group",
 };
 
 const groupSlice = createSlice({

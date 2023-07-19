@@ -128,7 +128,7 @@ const MessageScreen = () => {
           event: "INSERT",
           schema: "public",
           table: "messages",
-          filter: `group_id=eq.${groupID}`,
+          // filter: `group_id=eq.${groupID}`,
         },
         (payload) => {
           updateLastVisited();
