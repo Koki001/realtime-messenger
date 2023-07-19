@@ -38,37 +38,63 @@ const MessageScreen = () => {
 
   const dispatch = useAppDispatch();
   const groupID = useAppSelector((state) => state.group.id);
-    const updateLastVisited = async () => {
-      const { data, error } = await supabase
-        .from("user_logs")
-        .update({ last_visited: new Date().toISOString() })
-        .eq("group_id", groupID);
-    };
+  const privateChat = useAppSelector((state) => state.profile.is_private);
+  const updateLastVisited = async () => {
+    const { data, error } = await supabase
+      .from("user_logs")
+      .update({ last_visited: new Date().toISOString() })
+      .eq("group_id", groupID);
+  };
   const getMessages = async () => {
     setLoader(true);
     if (groupID !== "") {
-      const { data, error } = await supabase
-        .from(`messages`)
-        .select("*, profile: profiles(id, username)")
-        // hardcoded group ID
-        .match({ group_id: groupID })
-        .order("created_at");
-      const { data: all_users } = await supabase.from("profiles").select("*");
-      if (!data) {
-        // console.log("no data");
-        console.log(error);
-        return;
-      }
-      data
-        .map((message) => message.profile)
-        .forEach((profile) => {
-          profileCache[profile.id] = profile;
-        });
+      if (!privateChat) {
+        const { data, error } = await supabase
+          .from(`messages`)
+          .select("*, profile: profiles(id, username)")
+          // hardcoded group ID
+          .match({ group_id: groupID })
+          .order("created_at");
+        const { data: all_users } = await supabase.from("profiles").select("*");
+        if (!data) {
+          // console.log("no data");
+          console.log(error);
+          return;
+        }
+        data
+          .map((message) => message.profile)
+          .forEach((profile) => {
+            profileCache[profile.id] = profile;
+          });
         updateLastVisited();
-      setMessages(data);
-      setProfiles(all_users as any);
+        setMessages(data);
+        setProfiles(all_users as any);
 
-      setLoader(false);
+        setLoader(false);
+      } else if (privateChat) {
+        const { data, error } = await supabase
+          .from(`direct_messages`)
+          .select("*, profile: profiles(id, username)")
+          // hardcoded group ID
+          .match({ private_group_id: groupID })
+          .order("created_at");
+        const { data: all_users } = await supabase.from("profiles").select("*");
+        if (!data) {
+          // console.log("no data");
+          console.log(error);
+          return;
+        }
+        data
+          .map((message) => message.profile)
+          .forEach((profile) => {
+            profileCache[profile.id] = profile;
+          });
+        updateLastVisited();
+        setMessages(data);
+        setProfiles(all_users as any);
+
+        setLoader(false);
+      }
     }
   };
   const handleUSERTEST = (msg: any, usrs: any) => {
@@ -94,7 +120,7 @@ const MessageScreen = () => {
   // listener for realtime message changes
   useEffect(() => {
     // console.log("running");
-    // const subscription = 
+    // const subscription =
     supabase
       // hardcoded group ID on listener
       .channel(`messages`)
@@ -107,7 +133,26 @@ const MessageScreen = () => {
           filter: `group_id=eq.${groupID}`,
         },
         (payload) => {
-          updateLastVisited()
+          updateLastVisited();
+          setMessages((current) => [...current, payload.new as Message]);
+          // getMessages();
+        }
+      )
+      .subscribe();
+    supabase
+      // hardcoded group ID on listener
+      .channel(`direct_messages`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "direct_messages",
+          filter: `private_group_id=eq.${groupID}`,
+        },
+        (payload) => {
+          console.log(groupID)
+          updateLastVisited();
           setMessages((current) => [...current, payload.new as Message]);
           // getMessages();
         }

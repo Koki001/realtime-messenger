@@ -5,9 +5,20 @@ import { useState, useEffect } from "react";
 import { store } from "@/store";
 import { useAppSelector, useAppDispatch } from "@/store";
 import { setGroupID, setGroupName } from "@/store/groupSlice";
+import { setPrivate } from "@/store/profileSlice";
+
+interface Contact {
+  bio: null | string;
+  email: string;
+  first_name: string;
+  id: string;
+  last_name: string;
+  location: null | string;
+  username: null | string;
+}
 
 interface GroupedContacts {
-  [letter: string]: string[];
+  [letter: string]: { name: string; id: string }[];
 }
 const Contacts = () => {
   const [contactEmail, setContactEmail] = useState<string>();
@@ -29,13 +40,36 @@ const Contacts = () => {
       console.log(profilesError);
       return;
     }
-
+    console.log(profiles);
     if (!profiles) {
       console.log("profile not found");
       return;
     }
+    if (profiles.id) {
+      const contactId = profiles.id;
 
-    const contactId = profiles.id;
+      setContactEmail("");
+
+      const { data: contactData, error: contactError } = await supabase
+        .from("contacts")
+        .insert([
+          {
+            user_one: currentUser,
+            user_two: contactId,
+          },
+        ])
+        .select();
+      // console.log("contact data", contactData);
+      if (contactData) {
+        const { error } = await supabase.rpc("create_private_chat", {
+          id: contactData[0].id,
+          user_one: currentUser,
+          user_two: contactId,
+        });
+      }
+
+      getContactList();
+    }
     // const query1 = supabase
     //   .from("contacts")
     //   .select("*")
@@ -54,20 +88,7 @@ const Contacts = () => {
 
     // const contactExists = result1.data || result2.data;
     // console.log(contactExists);
-    setContactEmail("");
 
-    const { data: contactData, error: contactError } = await supabase
-      .from("contacts")
-      .insert([
-        {
-          id: currentUser + contactId,
-          user_one: currentUser,
-          user_two: contactId,
-        },
-      ]);
-    const { error } = await supabase.rpc("create_private_chat", {
-      id: currentUser + contactId,
-    });
     // const { data } = await supabase.rpc("create_new_group", {
     //   name: "private",
     // });
@@ -78,12 +99,12 @@ const Contacts = () => {
     // }
     // dispatch(setGroupID(data.id));
     // dispatch(setGroupName(profiles.first_name));
-    getContactList();
-    if (contactError) {
-      console.log(contactError);
-    } else {
-      console.log(contactData);
-    }
+
+    // if (contactError) {
+    //   console.log(contactError);
+    // } else {
+    //   console.log(contactData);
+    // }
   };
 
   const getContactList = async () => {
@@ -104,6 +125,7 @@ const Contacts = () => {
         .in("id", userIds);
 
       setContactInfo(list as any);
+      console.log(list);
       const contacts = list?.map((e) => `${e.first_name} ${e.last_name}`);
       if (contacts) {
         setContactList(contacts);
@@ -115,26 +137,54 @@ const Contacts = () => {
     getContactList();
   }, []);
 
-  const groupedContacts: GroupedContacts = contactList
-    .sort()
-    .reduce((result: GroupedContacts, name: string) => {
-      const firstLetter: string = name.charAt(0).toUpperCase();
-      if (!result[firstLetter]) {
-        result[firstLetter] = [];
-      }
-      result[firstLetter].push(name);
-      return result;
-    }, {});
+  const groupedContacts: GroupedContacts = contactInfo?.length
+    ? contactInfo
+        .sort((a: Contact, b: Contact) =>
+          a.first_name.localeCompare(b.first_name)
+        )
+        .reduce((result: GroupedContacts, contact: Contact) => {
+          const firstLetter: string = contact.first_name
+            .charAt(0)
+            .toUpperCase();
+          if (!result[firstLetter]) {
+            result[firstLetter] = [];
+          }
+          result[firstLetter].push({
+            name: `${contact.first_name} ${contact.last_name}`,
+            id: contact.id,
+          });
+          return result;
+        }, {})
+    : {};
 
   const handleContactChat = async (e: any) => {
-    contactInfo?.forEach((contact: any) => {
-      if (`${contact.first_name} ${contact.last_name}` === e) {
-        setSelectedContact(contact);
-        console.log(groupedContacts);
-        // dispatch(setGroupID(contact.id));
-        // dispatch(setGroupName(contact.first_name));
-      }
+    // contactInfo?.forEach((contact: any) => {
+    //   if (`${contact.first_name} ${contact.last_name}` === e) {
+    //     setSelectedContact(contact);
+    //     console.log(selectedContact);
+    //     // dispatch(setGroupID(contact.id));
+    //     // dispatch(setGroupName(contact.first_name));
+    //   }
+    // });
+    // dispatch(setPrivate(true));
+  };
+
+  const handleContactSelect = async (e: any) => {
+    setSelectedContact(e);
+    dispatch(setPrivate(true));
+    // console.log(e);
+    const { data, error } = await supabase.rpc("find_matching_ids", {
+      user_one_value: currentUser,
+      user_two_value: e,
     });
+
+    if (data) {
+      console.log(data[0].id);
+      dispatch(setGroupID(data[0].id));
+    }
+    if (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -145,7 +195,7 @@ const Contacts = () => {
         <button onClick={handleAddContact}>add new</button>
       </div>
       <ul className="viewContacts">
-        {contactInfo &&
+        {contactInfo?.length > 0 &&
           Object.keys(groupedContacts).map((letter, index) => {
             return (
               <li key={index}>
@@ -153,9 +203,17 @@ const Contacts = () => {
                 <ul>
                   {groupedContacts[letter].map((name, indexTwo) => {
                     return (
-                      <li className="contactInfo" key={index + name}>
-                        <p>{name}</p>
-                        <button onClick={() => handleContactChat(name)}>
+                      <li
+                        onClick={() => handleContactSelect(name.id)}
+                        className={
+                          selectedContact === name.id
+                            ? "contactInfo selectedContact"
+                            : "contactInfo"
+                        }
+                        key={index + name.name}
+                      >
+                        <p>{name.name}</p>
+                        <button onClick={() => handleContactChat(name.name)}>
                           ...
                         </button>
                       </li>

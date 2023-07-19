@@ -11,6 +11,7 @@ import { useState } from "react";
 import { setGroupID } from "@/store/groupSlice";
 const Input = () => {
   const groupID = useAppSelector((state) => state.group.id);
+  const privateChat = useAppSelector((state) => state.profile.is_private);
   const [emojis, setEmojis] = useState(false);
   const [input, setInput] = useState<string>("");
   const dispatch = useAppDispatch();
@@ -26,14 +27,25 @@ const Input = () => {
         .eq("group_id", groupID);
     };
     if (typeof message === "string" && message.trim().length !== 0) {
-      const { error } = await supabase.from("messages").insert({
-        content: message,
-        group_id: groupID,
-      });
-      dispatch(setGroupID(groupID));
-      form.reset();
-      setInput("");
-      updateLastVisited();
+      if (privateChat === false) {
+        const { error } = await supabase.from("messages").insert({
+          content: message,
+          group_id: groupID,
+        });
+        dispatch(setGroupID(groupID));
+        form.reset();
+        setInput("");
+        updateLastVisited();
+      } else if (privateChat === true) {
+        const { error } = await supabase.from("direct_messages").insert({
+          content: message,
+          private_group_id: groupID,
+        });
+        dispatch(setGroupID(groupID));
+        form.reset();
+        setInput("");
+        updateLastVisited();
+      }
     }
   };
   const handleEmojiPicker = () => {
