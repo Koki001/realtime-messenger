@@ -44,7 +44,6 @@ export default function Home() {
       setTimeout(() => {
         setLoader(false);
       }, 1200);
-      console.log(error);
     }
   };
 

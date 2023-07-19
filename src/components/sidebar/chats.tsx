@@ -5,6 +5,7 @@ import supabase from "@/utils/supabase";
 import { store } from "@/store";
 import { setGroupID, setGroupName } from "@/store/groupSlice";
 import { useAppDispatch, useAppSelector } from "@/store";
+import { setPrivate } from "@/store/profileSlice";
 
 const Chats = () => {
   const [groupsArr, setGroupsArr] = useState([] as any[]);
@@ -61,6 +62,7 @@ const Chats = () => {
   }, []);
 
   const handleGroupSelect = (e: any, group: any, index: any) => {
+    dispatch(setPrivate(false))
     dispatch(setGroupID(group.id));
     dispatch(setGroupName(group.name));
   };
@@ -125,7 +127,12 @@ const Chats = () => {
                       {lastMessage && lastMessage[index]}
                     </p>
                     <p className="lastTime">
-                      {time.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true })}
+                      {lastTime[index] !== undefined &&
+                        time.toLocaleTimeString([], {
+                          hour: "numeric",
+                          minute: "2-digit",
+                          hour12: true,
+                        })}
                     </p>
                   </div>
                 </li>

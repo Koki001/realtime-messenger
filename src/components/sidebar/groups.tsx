@@ -29,10 +29,17 @@ const Groups = () => {
     dispatch(setGroupID(data.id));
     dispatch(setGroupName(data.name));
     setNewGroup(false);
+
+    const { data: userLogs } = await supabase
+      .from("user_logs")
+      .insert({ profile_id: user, group_id: data.id });
   };
 
   const getGroups = async () => {
-    const { data } = await supabase.from("groups").select("*").neq("private", "true");
+    const { data } = await supabase
+      .from("groups")
+      .select("*")
+      .neq("private", "true");
     if (data) {
       setGroupsArr(data as any);
     }
@@ -99,6 +106,7 @@ const Groups = () => {
         },
         () => {
           getNotifications();
+          console.log("message channel")
         }
       )
       .subscribe();
@@ -122,9 +130,9 @@ const Groups = () => {
   }, [groupID]);
 
   const handleGroupSelect = async (e: any, group: any, index: any) => {
+    dispatch(setPrivate(false));
     dispatch(setGroupID(group.id));
     dispatch(setGroupName(group.name));
-    dispatch(setPrivate(false))
     // const { error } = await supabase
     //   .from("user_logs")
     //   .insert({ profile_id: store.getState().profile.id, group_id: group.id });
@@ -150,7 +158,7 @@ const Groups = () => {
       <ul className="groupsRecent">
         {groupsArr
           ?.filter((group) =>
-            group.name.toLowerCase().includes(groupFilter.toLowerCase())
+            group?.name.toLowerCase().includes(groupFilter.toLowerCase())
           )
           .map((group, index) => {
             return (

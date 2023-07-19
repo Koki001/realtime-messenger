@@ -34,15 +34,15 @@ const SignUp = () => {
       <div className="heading">
         <Image
           src={"/assets/favicon.ico"}
-          alt="Chatvia"
+          alt="ChatSpace"
           height={35}
           width={35}
         />
-        <h1>Chatvia</h1>
+        <h1>ChatSpace</h1>
       </div>
       <div className="signInMessage">
         <h2>Sign in</h2>
-        <p>Sign in to continue to Chatvia</p>
+        <p>Sign in to continue to ChatSpace</p>
       </div>
       <form onSubmit={handleSubmit}>
         <div className="formBlock">
@@ -67,7 +67,7 @@ const SignUp = () => {
           {"Don't have an account ?"} <Link href={"/signup"}>Sign up now</Link>
         </p>
       </div>
-      <p>© 2023 Chatvia. Crafted with HEART by Themesbrand </p>
+      <p>© 2023 ChatSpace. Crafted with HEART by Themesbrand </p>
     </main>
   );
 };

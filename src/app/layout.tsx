@@ -4,7 +4,7 @@ import { Auth } from "@supabase/auth-ui-react";
 import supabase from "@/utils/supabase";
 
 export const metadata = {
-  title: "Chatvia Messenger",
+  title: "ChatSpace Messenger",
   description: "Built in NextJS using Typescript, Tailwind and Supabase",
 };
 

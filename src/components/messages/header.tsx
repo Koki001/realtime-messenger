@@ -10,14 +10,14 @@ import "../../styles/header.scss";
 const Header = () => {
   const [participants, setParticipants] = useState<any>([]);
   const groupID = store.getState().group.id;
-  const groupName = store.getState().group.name;
+  const groupName = useAppSelector((state) => state.group.name);
 
   const getParticipants = async () => {
     const { data: profiles, error } = await supabase
       .from("group_participants")
       .select("group_id, profiles (first_name, last_name)")
       .match({ group_id: groupID });
-    console.log(profiles)
+    // console.log(profiles)
     if (profiles) {
       setParticipants(profiles);
     }
@@ -35,7 +35,7 @@ const Header = () => {
           <p className="groupNameP">{groupName}</p>
         </div>
         {/* <p>img</p> */}
-        {participants &&
+        {participants.length > 0 && (
           // participants.map((participant: any, index: number) => {
           //   return (
           //     <div key={index + "participant"} className="participants">
@@ -43,13 +43,13 @@ const Header = () => {
           //         {/* {index + 1 + "."}
           //         {participant.profiles.first_name}{" "}
           //         {participant.profiles.last_name} */}
-                 
+
           //       </p>
           //     </div>
           //   );
           // })
           <p className="participantNumber">({participants.length})</p>
-          }
+        )}
       </div>
       <div className="headerOptions">
         <button>srch</button>

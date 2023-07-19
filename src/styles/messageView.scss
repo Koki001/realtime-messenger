@@ -17,6 +17,9 @@
   align-items: center;
   padding: 30px;
 }
+.blurred {
+  filter: blur(2px);
+}
 .messageInput input {
   padding: 15px;
   width: 70%;
@@ -153,8 +156,8 @@
   margin: 5px;
 }
 .bubbleAvatar {
-  height: 50px;
-  width: 50px;
+  min-height: 50px;
+  min-width: 50px;
   background-color: #9391b3;
   border-radius: 50%;
   display: flex;
@@ -171,6 +174,7 @@
 .messageText {
   border-radius: 10px;
   position: relative;
+  white-space: pre-wrap;
 }
 .messageSender {
   color: black;

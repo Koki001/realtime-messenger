@@ -12,6 +12,7 @@ import { setGroupID } from "@/store/groupSlice";
 const Input = () => {
   const groupID = useAppSelector((state) => state.group.id);
   const privateChat = useAppSelector((state) => state.profile.is_private);
+  const currentUser = useAppSelector((state) => state.profile.id);
   const [emojis, setEmojis] = useState(false);
   const [input, setInput] = useState<string>("");
   const dispatch = useAppDispatch();
@@ -25,10 +26,12 @@ const Input = () => {
         .from("user_logs")
         .update({ last_visited: new Date().toISOString() })
         .eq("group_id", groupID);
+      console.log("logging ?");
     };
     if (typeof message === "string" && message.trim().length !== 0) {
       if (privateChat === false) {
         const { error } = await supabase.from("messages").insert({
+          // profile_id: currentUser,
           content: message,
           group_id: groupID,
         });
@@ -38,6 +41,7 @@ const Input = () => {
         updateLastVisited();
       } else if (privateChat === true) {
         const { error } = await supabase.from("direct_messages").insert({
+          // profile_id: currentUser,
           content: message,
           private_group_id: groupID,
         });
@@ -55,7 +59,14 @@ const Input = () => {
     setInput(input + e.emoji);
   };
   return (
-    <form onSubmit={handleSendMessage} className="messageInput">
+    <form
+      onSubmit={handleSendMessage}
+      className={
+        groupID === "1d6c3f19-ab40-4c3f-b8eb-8a38495a45df"
+          ? "messageInput blurred"
+          : "messageInput"
+      }
+    >
       <input
         placeholder="Enter Message..."
         onChange={(e) => setInput(e.target.value)}
@@ -63,6 +74,7 @@ const Input = () => {
         type="text"
         name="message"
         value={input}
+        disabled={groupID === "1d6c3f19-ab40-4c3f-b8eb-8a38495a45df"}
       />
       <div className="emojiDiv">
         <FaRegSmile onClick={handleEmojiPicker} />

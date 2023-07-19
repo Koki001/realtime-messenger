@@ -38,7 +38,7 @@ const MessageScreen = () => {
 
   const dispatch = useAppDispatch();
   const groupID = useAppSelector((state) => state.group.id);
-  const privateChat = useAppSelector((state) => state.profile.is_private);
+  const privateChat = store.getState().profile.is_private;
   const updateLastVisited = async () => {
     const { data, error } = await supabase
       .from("user_logs")
@@ -47,54 +47,52 @@ const MessageScreen = () => {
   };
   const getMessages = async () => {
     setLoader(true);
-    if (groupID !== "") {
-      if (!privateChat) {
-        const { data, error } = await supabase
-          .from(`messages`)
-          .select("*, profile: profiles(id, username)")
-          // hardcoded group ID
-          .match({ group_id: groupID })
-          .order("created_at");
-        const { data: all_users } = await supabase.from("profiles").select("*");
-        if (!data) {
-          // console.log("no data");
-          console.log(error);
-          return;
-        }
-        data
-          .map((message) => message.profile)
-          .forEach((profile) => {
-            profileCache[profile.id] = profile;
-          });
-        updateLastVisited();
-        setMessages(data);
-        setProfiles(all_users as any);
-
-        setLoader(false);
-      } else if (privateChat) {
-        const { data, error } = await supabase
-          .from(`direct_messages`)
-          .select("*, profile: profiles(id, username)")
-          // hardcoded group ID
-          .match({ private_group_id: groupID })
-          .order("created_at");
-        const { data: all_users } = await supabase.from("profiles").select("*");
-        if (!data) {
-          // console.log("no data");
-          console.log(error);
-          return;
-        }
-        data
-          .map((message) => message.profile)
-          .forEach((profile) => {
-            profileCache[profile.id] = profile;
-          });
-        updateLastVisited();
-        setMessages(data);
-        setProfiles(all_users as any);
-
-        setLoader(false);
+    if (!privateChat) {
+      const { data, error } = await supabase
+        .from(`messages`)
+        .select("*, profile: profiles(id, username)")
+        // hardcoded group ID
+        .match({ group_id: groupID })
+        .order("created_at");
+      const { data: all_users } = await supabase.from("profiles").select("*");
+      if (!data) {
+        // console.log("no data");
+        console.log(error);
+        return;
       }
+      data
+        .map((message) => message.profile)
+        .forEach((profile) => {
+          profileCache[profile.id] = profile;
+        });
+      updateLastVisited();
+      setMessages(data);
+      setProfiles(all_users as any);
+
+      setLoader(false);
+    } else if (privateChat) {
+      const { data, error } = await supabase
+        .from(`direct_messages`)
+        .select("*, profile: profiles(id, username)")
+        // hardcoded group ID
+        .match({ private_group_id: groupID })
+        .order("created_at");
+      const { data: all_users } = await supabase.from("profiles").select("*");
+      if (!data) {
+        // console.log("no data");
+        console.log(error);
+        return;
+      }
+      data
+        .map((message) => message.profile)
+        .forEach((profile) => {
+          profileCache[profile.id] = profile;
+        });
+      updateLastVisited();
+      setMessages(data);
+      setProfiles(all_users as any);
+
+      setLoader(false);
     }
   };
   const handleUSERTEST = (msg: any, usrs: any) => {
@@ -151,7 +149,7 @@ const MessageScreen = () => {
           filter: `private_group_id=eq.${groupID}`,
         },
         (payload) => {
-          console.log(groupID)
+          console.log(groupID);
           updateLastVisited();
           setMessages((current) => [...current, payload.new as Message]);
           // getMessages();
@@ -197,7 +195,7 @@ const MessageScreen = () => {
       <button style={{ position: "absolute", left: 0 }} onClick={handleSignout}>
         SIGN OUT
       </button>
-      {groupID !== "1d6c3f19-ab40-4c3f-b8eb-8a38495a45df" && (
+      {groupID !== "1d6c3f19-ab40-4c3f-b8eb-8a38495a45df" && !privateChat && (
         <>
           <label htmlFor="invite">INVITE TO GROUP BY EMAIL:</label>
           <input

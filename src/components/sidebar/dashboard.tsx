@@ -40,7 +40,7 @@ const Sidebar = () => {
       <div className={"sidebar"}>
         <Image
           src={"/assets/favicon.ico"}
-          alt="Chatvia"
+          alt="ChatSpace"
           height={35}
           width={35}
         />

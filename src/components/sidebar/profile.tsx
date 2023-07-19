@@ -7,13 +7,32 @@ import Typography from "@mui/material/Typography";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { LiaUserTieSolid } from "react-icons/lia";
 import { RiAttachmentLine } from "react-icons/ri";
+import supabase from "@/utils/supabase";
+
 const Profile = () => {
   const selector = useAppSelector((state) => state.profile);
+  const currentUser = useAppSelector((state) => state.profile.id);
+
+  const uploadFile = async (e: any) => {
+    let image = e.target.files[0];
+    console.log(e.target);
+    const { data, error } = await supabase.storage
+      .from("profiles")
+      .upload(currentUser + "/" + "avatar", image);
+  };
+
   return (
     <>
       <div className="profileOptions">
         <h2>My Profile</h2>
-        <button>opt</button>
+        <label className="sr-only" htmlFor="fileUpload">upload image</label>
+        <input
+          onChange={(e) => uploadFile(e)}
+          type="file"
+          id="fileUpload"
+          name="fileUpload"
+          accept="image/png, image/jpeg, image/jpg"
+        />
       </div>
       <div className="avatar">
         <p className="img"></p>
