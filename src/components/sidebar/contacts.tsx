@@ -350,12 +350,13 @@ const Contacts = () => {
                         key={index + name.name}
                       >
                         <p>{name.name}</p>
-                        {notifications[name.group] > 0 &&
-                          notifications[name.group] !== groupID && (
-                            <p className="dmNotification">
-                              {notifications[name.group]}
-                            </p>
-                          )}
+                        {notifications[name?.group] !== undefined &&
+                        notifications[name.group] > 0 &&
+                        notifications[name.group] !== groupID ? (
+                          <p className="dmNotification">
+                            {notifications[name.group]}
+                          </p>
+                        ) : null}
                         <button onClick={() => handleContactChat(name.name)}>
                           ...
                         </button>
