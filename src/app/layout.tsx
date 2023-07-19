@@ -1,4 +1,3 @@
-"use client"
 import "../styles/globals.scss";
 import { Auth } from "@supabase/auth-ui-react";
 import supabase from "@/utils/supabase";
