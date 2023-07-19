@@ -339,7 +339,6 @@ const Contacts = () => {
                 <h3 className="contactLetter">{letter}</h3>
                 <ul>
                   {groupedContacts[letter].map((name, indexTwo) => {
-                    console.log(notifications);
                     return (
                       <li
                         onClick={() => handleContactSelect(name.id, name.name)}
