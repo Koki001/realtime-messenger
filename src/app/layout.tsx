@@ -1,6 +1,6 @@
 import "../styles/globals.scss";
-import { Auth } from "@supabase/auth-ui-react";
-import supabase from "@/utils/supabase";
+// import { Auth } from "@supabase/auth-ui-react";
+// import supabase from "@/utils/supabase";
 
 export const metadata = {
   title: "ChatSpace Messenger",
@@ -16,9 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Auth.UserContextProvider supabaseClient={supabase}>
+        {/* <Auth.UserContextProvider supabaseClient={supabase}> */}
           {children}
-        </Auth.UserContextProvider>
+        {/* </Auth.UserContextProvider> */}
       </body>
     </html>
   );
