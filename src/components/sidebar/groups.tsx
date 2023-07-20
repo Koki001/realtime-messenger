@@ -81,7 +81,7 @@ const Groups = () => {
           visitedObj.group_id !== groupID
         ) {
           if (!counts[message.group_id]) {
-            counts[message.group_id] = 0;
+            counts[message.group_id] = 1;
           } else {
             counts[message.group_id]++;
           }

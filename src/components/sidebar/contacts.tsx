@@ -193,7 +193,7 @@ const Contacts = () => {
           visitedObj.group_id !== groupID
         ) {
           if (!counts[message.private_group_id]) {
-            counts[message.private_group_id] = 0;
+            counts[message.private_group_id] = 1;
             notificationCount = 0;
           } else {
             counts[message.private_group_id]++;
