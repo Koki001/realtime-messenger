@@ -161,7 +161,7 @@ const MessageScreen = () => {
         <h1>SELECT GROUP CHAT</h1>
       ) : (
         <ul ref={containerRef} className={"messageView"}>
-          {!loader ? (
+          {loader === false ? (
             messages.length > 0 ? (
               messages?.map((message: Message, index) => {
                 const names = handleUSERTEST(message, profiles);
