@@ -67,7 +67,7 @@ const MessageScreen = () => {
       setMessages(data);
       setProfiles(all_users as any);
 
-      // setLoader(false);
+      setLoader(false);
     } else if (privateChat) {
       const { data, error } = await supabase
         .from(`direct_messages`)
@@ -88,7 +88,7 @@ const MessageScreen = () => {
       setMessages(data);
       setProfiles(all_users as any);
 
-      // setLoader(false);
+      setLoader(false);
     }
   };
   const handleUSERTEST = (msg: any, usrs: any) => {
