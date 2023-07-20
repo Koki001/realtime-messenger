@@ -31,7 +31,6 @@ const Input = () => {
     if (typeof message === "string" && message.trim().length !== 0) {
       if (privateChat === false) {
         const { error } = await supabase.from("messages").insert({
-          // profile_id: currentUser,
           content: message,
           group_id: groupID,
         });
@@ -41,7 +40,6 @@ const Input = () => {
         updateLastVisited();
       } else if (privateChat === true) {
         const { error } = await supabase.from("direct_messages").insert({
-          // profile_id: currentUser,
           content: message,
           private_group_id: groupID,
         });

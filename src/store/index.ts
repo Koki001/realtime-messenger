@@ -5,12 +5,14 @@ import type { TypedUseSelectorHook } from "react-redux";
 import profileReducer from "./profileSlice";
 import groupReducer from "./groupSlice";
 import contactRedurecr from "./contactSlice";
+import notificationsSlice from "./notificationsSlice";
 
 export const store = configureStore({
   reducer: {
     profile: profileReducer,
     group: groupReducer,
     contact: contactRedurecr,
+    notifications: notificationsSlice
   },
 });
 

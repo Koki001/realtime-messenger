@@ -6,6 +6,9 @@ import { store } from "@/store";
 import { setGroupID, setGroupName } from "@/store/groupSlice";
 import { useAppDispatch, useAppSelector } from "@/store";
 import { setPrivate } from "@/store/profileSlice";
+import { setGroupsNotifications } from "@/store/notificationsSlice";
+import { FiUsers } from "react-icons/fi";
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 const Groups = () => {
   const [groupsArr, setGroupsArr] = useState([] as any[]);
@@ -16,6 +19,7 @@ const Groups = () => {
   const groupID = useAppSelector((state) => state.group.id);
   const user = useAppSelector((state) => state.profile.id);
   const [notifications, setNotifications] = useState<any>([]);
+  const [groupInvite, setGroupInvite] = useState(false);
 
   const handlePropagation = (e: any) => {
     e.stopPropagation();
@@ -53,7 +57,6 @@ const Groups = () => {
   };
 
   const getNotifications = async () => {
-    // console.log("notifications")
     const { data: lastVisited, error: lastVisitedErr } = await supabase
       .from("user_logs")
       .select("group_id, last_visited")
@@ -78,16 +81,14 @@ const Groups = () => {
           visitedObj.group_id !== groupID
         ) {
           if (!counts[message.group_id]) {
-            counts[message.group_id] = 1;
+            counts[message.group_id] = 0;
           } else {
             counts[message.group_id]++;
           }
         }
       });
-      // console.log("last visited", lastVisited)
-      // console.log("messages", messages)
       setNotifications(counts);
-      // console.log(notifications);
+      dispatch(setGroupsNotifications(counts));
       return counts;
     }
   };
@@ -106,7 +107,7 @@ const Groups = () => {
         },
         () => {
           getNotifications();
-          console.log("message channel")
+          console.log("message channel");
         }
       )
       .subscribe();
@@ -128,22 +129,45 @@ const Groups = () => {
   useEffect(() => {
     updateLastVisited();
   }, [groupID]);
-
+  const handleInvite = async (e: React.KeyboardEvent<HTMLInputElement>) => {
+    e.stopPropagation()
+    if (e.key === "Enter") {
+      const target = e.currentTarget;
+      const { data } = await supabase
+        .from("profiles")
+        .select("id")
+        .match({ email: target.value })
+        .single();
+      if (!data) {
+        return alert("user not found");
+      }
+      const { error } = await supabase
+        .from("group_participants")
+        .insert({ profile_id: data?.id, group_id: groupID });
+      if (error) {
+        return alert("not sent ");
+      }
+      if (!error) {
+        target.value = "";
+      }
+      const { data: userLogs } = await supabase
+        .from("user_logs")
+        .insert({ profile_id: data?.id, group_id: groupID });
+    }
+  };
   const handleGroupSelect = async (e: any, group: any, index: any) => {
     dispatch(setPrivate(false));
     dispatch(setGroupID(group.id));
     dispatch(setGroupName(group.name));
-    // const { error } = await supabase
-    //   .from("user_logs")
-    //   .insert({ profile_id: store.getState().profile.id, group_id: group.id });
-    // console.log(~~(+new Date() / 1000));
   };
 
   return (
     <>
       <div className="groupsHeading">
         <h2>Groups</h2>
-        <button onClick={() => setNewGroup(true)}>new +</button>
+        <button className="addGroup" onClick={() => setNewGroup(true)}>
+          <FiUsers />
+        </button>
         <label className="sr-only" htmlFor="searchGroup"></label>
         <input
           onChange={(e) => setGroupFilter(e.target.value)}
@@ -176,6 +200,14 @@ const Groups = () => {
                   {group.name.charAt(0).toUpperCase()}
                 </p>
                 <p className="groupNameP">#{group.name}</p>
+                {group.id !== "1d6c3f19-ab40-4c3f-b8eb-8a38495a45df" && (
+                  <button
+                    onClick={() => setGroupInvite(!groupInvite)}
+                    className="groupMore"
+                  >
+                    <BsThreeDotsVertical />
+                  </button>
+                )}
                 {notifications[group.id] > 0 &&
                   notifications[group.id] !== groupID && (
                     <p className="notification">{notifications[group.id]}</p>
@@ -184,6 +216,20 @@ const Groups = () => {
             );
           })}
       </ul>
+      {groupInvite && (
+        <div onClick={() => setGroupInvite(false)} className="inviteToGroup">
+          <div onClick={(e) => e.stopPropagation()} className="innerInvitePopup">
+            <label htmlFor="invite">Invite by user email:</label>
+            <input
+              onKeyDown={handleInvite}
+              name="invite"
+              type="text"
+              id="invite"
+            />
+          </div>
+        </div>
+      )}
+
       {newGroup && (
         <div onClick={handlePropagation} className="newGroupPopup">
           <div onClick={(e) => e.stopPropagation()} className="createGroup">

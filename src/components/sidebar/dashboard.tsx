@@ -10,13 +10,16 @@ import Settings from "./settings";
 import Image from "next/dist/client/image";
 import { LiaUserTieSolid } from "react-icons/lia";
 import { BiMessageSquareDots, BiMoon } from "react-icons/bi";
-import {FiUsers} from "react-icons/fi"
-import {PiUserList} from "react-icons/pi"
-import {SlSettings} from "react-icons/sl"
-import {RiGlobalLine} from "react-icons/ri"
+import { FiUsers } from "react-icons/fi";
+import { PiUserList } from "react-icons/pi";
+import { SlSettings } from "react-icons/sl";
+import { RiGlobalLine } from "react-icons/ri";
+import { store, useAppSelector } from "@/store";
 
 const Sidebar = () => {
   const [view, setView] = useState("profile");
+
+  const selector = useAppSelector((store) => store.notifications);
 
   interface componentView {
     [key: string]: React.ReactNode;
@@ -73,7 +76,11 @@ const Sidebar = () => {
             name="options"
             id="groups"
           />
-          <label title="Groups" htmlFor="groups">
+          <label
+            title="Groups"
+            htmlFor="groups"
+            className={selector.groups > 0 ? "hasNotifications" : ""}
+          >
             <FiUsers />
           </label>
           <input
@@ -83,7 +90,11 @@ const Sidebar = () => {
             name="options"
             id="contacts"
           />
-          <label title="Contacts" htmlFor="contacts">
+          <label
+            title="Contacts"
+            htmlFor="contacts"
+            className={selector.contacts > 0 ? "hasNotifications" : ""}
+          >
             <PiUserList />
           </label>
           <input

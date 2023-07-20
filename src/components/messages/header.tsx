@@ -6,6 +6,11 @@ import { store } from "@/store";
 import { useAppSelector } from "@/store";
 import "../../styles/dashboard.scss";
 import "../../styles/header.scss";
+import {FiSearch} from "react-icons/fi"
+import { LuPhone } from "react-icons/lu";
+import {AiOutlineVideoCamera} from "react-icons/ai"
+import {LiaUserTieSolid} from "react-icons/lia"
+import {BsThreeDotsVertical} from "react-icons/bs"
 
 const Header = () => {
   const [participants, setParticipants] = useState<any>([]);
@@ -17,7 +22,6 @@ const Header = () => {
       .from("group_participants")
       .select("group_id, profiles (first_name, last_name)")
       .match({ group_id: groupID });
-    // console.log(profiles)
     if (profiles) {
       setParticipants(profiles);
     }
@@ -34,29 +38,31 @@ const Header = () => {
           <p className="groupIcon">{groupName.charAt(0).toUpperCase()}</p>
           <p className="groupNameP">{groupName}</p>
         </div>
-        {/* <p>img</p> */}
         {participants.length > 0 && (
-          // participants.map((participant: any, index: number) => {
-          //   return (
-          //     <div key={index + "participant"} className="participants">
-          //       <p>
-          //         {/* {index + 1 + "."}
-          //         {participant.profiles.first_name}{" "}
-          //         {participant.profiles.last_name} */}
-
-          //       </p>
-          //     </div>
-          //   );
-          // })
           <p className="participantNumber">({participants.length})</p>
         )}
       </div>
       <div className="headerOptions">
-        <button>srch</button>
-        <button>call</button>
-        <button>vid</button>
-        <button>prof</button>
-        <button>more</button>
+        <label htmlFor="searchHeader">
+          <FiSearch />
+        </label>
+        <input id="searchHeader" type="button" className="sr-only" />
+        <label htmlFor="call">
+          <LuPhone />
+        </label>
+        <input id="call" type="button" className="sr-only" />{" "}
+        <label htmlFor="video">
+          <AiOutlineVideoCamera />
+        </label>
+        <input id="video" type="button" className="sr-only" />{" "}
+        <label htmlFor="profileHeader">
+          <LiaUserTieSolid />
+        </label>
+        <input id="profileHeader" type="button" className="sr-only" />{" "}
+        <label htmlFor="moreHeader">
+          <BsThreeDotsVertical />
+        </label>
+        <input id="moreHeader" type="button" className="sr-only" />
       </div>
     </div>
   );

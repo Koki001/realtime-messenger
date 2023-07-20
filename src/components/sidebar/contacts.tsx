@@ -5,7 +5,10 @@ import { useState, useEffect } from "react";
 import { store } from "@/store";
 import { useAppSelector, useAppDispatch } from "@/store";
 import { setGroupID, setGroupName } from "@/store/groupSlice";
-import { setPrivate } from "@/store/profileSlice";
+import { setEmail, setPrivate } from "@/store/profileSlice";
+import { setContactsNotifications } from "@/store/notificationsSlice";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import { AiOutlineUserAdd } from "react-icons/ai";
 
 interface Contact {
   bio: null | string;
@@ -27,12 +30,15 @@ const Contacts = () => {
   const [contactInfo, setContactInfo] = useState<any>();
   const [selectedContact, setSelectedContact] = useState<any>();
   const [notifications, setNotifications] = useState<any>();
+  const [addPopup, setAddPopup] = useState(false);
+  const [contactsFilter, setContactsFilter] = useState("");
 
   const currentUser = useAppSelector((state) => state.profile.id);
   const groupID = useAppSelector((state) => state.group.id);
   const dispatch = useAppDispatch();
 
-  const handleAddContact = async () => {
+  const handleAddContact = async (e: any) => {
+    e.stopPropagation();
     const { data: profiles, error: profilesError } = await supabase
       .from("profiles")
       .select("id, first_name")
@@ -62,7 +68,6 @@ const Contacts = () => {
           },
         ])
         .select();
-      // console.log("contact data", contactData);
       if (contactData) {
         const { error } = await supabase.rpc("create_private_chat", {
           id: contactData[0].id,
@@ -76,44 +81,10 @@ const Contacts = () => {
           profile_id: contactId,
           group_id: contactData[0].id,
         });
+        setAddPopup(false);
         getContactList();
       }
     }
-    // const query1 = supabase
-    //   .from("contacts")
-    //   .select("*")
-    //   .eq("user_one", currentUser)
-    //   .eq("user_two", contactId)
-    //   .single();
-
-    // const query2 = supabase
-    //   .from("contacts")
-    //   .select("*")
-    //   .eq("user_one", contactId)
-    //   .eq("user_two", currentUser)
-    //   .single();
-
-    // const [result1, result2] = await Promise.all([query1, query2]);
-
-    // const contactExists = result1.data || result2.data;
-    // console.log(contactExists);
-
-    // const { data } = await supabase.rpc("create_new_group", {
-    //   name: "private",
-    // });
-    // if (data) {
-    //   const { error } = await supabase
-    //     .from("group_participants")
-    //     .insert({ profile_id: contactId, group_id: data.id });
-    // }
-    // dispatch(setGroupID(data.id));
-    // dispatch(setGroupName(profiles.first_name));
-
-    // if (contactError) {
-    //   console.log(contactError);
-    // } else {
-    //   console.log(contactData);
-    // }
   };
 
   const getContactList = async () => {
@@ -140,34 +111,21 @@ const Contacts = () => {
         }
       );
 
-      // setContactInfo(list as any);
-      // console.log(list);
-
-      // console.log("CONTACT LIST", contactList);
-
       if (private_group) {
-        // console.log(private_group);
         const groupIds = private_group.map((group: any) => group.id);
-        // console.log("groupids", groupIds);
         const modifiedList = list?.map((item, index) => ({
           ...item,
           private_group_key: groupIds[index],
         }));
         setContactInfo(modifiedList);
-        // console.log(modifiedList);
       }
     }
   };
   const findContacts = async () => {
-    // const { data } = await supabase.rpc("find_matching_contacts", {
-    //   user_one_value: currentUser,
-    // });
-
     const { data, error } = await supabase
       .from("private_groups")
       .select("id, user_one, user_two")
       .or(`user_one.eq.${currentUser}, user_two.eq.${currentUser}`);
-    // .or(`user_two.eq.${currentUser}`);
 
     if (data) {
       const otherUsers = data.map((group) => {
@@ -179,15 +137,6 @@ const Contacts = () => {
       });
     }
   };
-  // const getGroups = async () => {
-  //   const { data } = await supabase
-  //     .from("groups")
-  //     .select("*")
-  //     .neq("private", "true");
-  //   if (data) {
-  //     setGroupsArr(data as any);
-  //   }
-  // };
   useEffect(() => {
     getContactList();
     findContacts();
@@ -214,17 +163,7 @@ const Contacts = () => {
         }, {})
     : {};
 
-  const handleContactChat = async (e: any) => {
-    // contactInfo?.forEach((contact: any) => {
-    //   if (`${contact.first_name} ${contact.last_name}` === e) {
-    //     setSelectedContact(contact);
-    //     console.log(selectedContact);
-    //     // dispatch(setGroupID(contact.id));
-    //     // dispatch(setGroupName(contact.first_name));
-    //   }
-    // });
-    // dispatch(setPrivate(true));
-  };
+  const handleContactChat = async (e: any) => {};
   const updateLastVisited = async () => {
     const { data, error } = await supabase
       .from("user_logs")
@@ -232,7 +171,6 @@ const Contacts = () => {
       .eq("group_id", groupID);
   };
   const getNotifications = async () => {
-    // console.log("notifications")
     const { data: lastVisited, error: lastVisitedErr } = await supabase
       .from("user_logs")
       .select("group_id, last_visited")
@@ -243,36 +181,34 @@ const Contacts = () => {
       .select("private_group_id, created_at")
       .neq("private_group_id", groupID);
     if (lastVisited && messages) {
-
       const counts: any = [];
-      // console.log(groupedContacts);
+      let notificationCount = 0;
       messages.forEach((message) => {
         const visitedObj = lastVisited.find(
           (visit) => visit.group_id === message.private_group_id
         );
-        console.log(visitedObj);
         if (
           visitedObj &&
           message.created_at > visitedObj.last_visited &&
           visitedObj.group_id !== groupID
         ) {
           if (!counts[message.private_group_id]) {
-            counts[message.private_group_id] = 1;
+            counts[message.private_group_id] = 0;
+            notificationCount = 0;
           } else {
             counts[message.private_group_id]++;
+            notificationCount++;
           }
         }
       });
-
+      dispatch(setContactsNotifications(notificationCount));
       setNotifications(counts);
-
       return counts;
     }
   };
   useEffect(() => {
     getNotifications();
     supabase
-      // hardcoded group ID on listener
       .channel(`direct_messages2`)
       .on(
         "postgres_changes",
@@ -322,14 +258,41 @@ const Contacts = () => {
       console.log(error);
     }
   };
-
+  const handleContactEmail = (e: any) => {
+    e.stopPropagation();
+    setContactEmail(e.target.value);
+  };
   return (
     <>
-      <h2>Contacts</h2>
-      <div className="searchContacts">
-        <input onChange={(e) => setContactEmail(e.target.value)} type="text" />
-        <button onClick={handleAddContact}>add new</button>
+      <div className="headingContacts">
+        <h2>Contacts</h2>
+        <label htmlFor="addNewContact">
+          <AiOutlineUserAdd />
+        </label>
+        <input
+          type="button"
+          id="addNewContact"
+          onClick={() => setAddPopup(!addPopup)}
+          className="sr-only"
+        />
       </div>
+      <label className="sr-only" htmlFor="searchContacts"></label>
+      <input
+        onChange={(e) => setContactsFilter(e.target.value)}
+        placeholder="Search contacts..."
+        className="contactsSearch"
+        type="text"
+        id="searchContacts"
+        name="searchContacts"
+      />
+      {addPopup && (
+        <div onClick={() => setAddPopup(false)} className="addContact">
+          <div className="popupInner" onClick={(e) => e.stopPropagation()}>
+            <input onChange={handleContactEmail} type="text" />
+            <button onClick={handleAddContact}>add new</button>
+          </div>
+        </div>
+      )}
       <ul className="viewContacts">
         {contactInfo?.length > 0 &&
           Object.keys(groupedContacts).map((letter, index) => {
@@ -337,31 +300,45 @@ const Contacts = () => {
               <li key={index}>
                 <h3 className="contactLetter">{letter}</h3>
                 <ul>
-                  {groupedContacts[letter].map((name, indexTwo) => {
-                    return (
-                      <li
-                        onClick={() => handleContactSelect(name.id, name.name)}
-                        className={
-                          selectedContact === name.id
-                            ? "contactInfo selectedContact"
-                            : "contactInfo"
-                        }
-                        key={index + name.name}
-                      >
-                        <p>{name.name}</p>
-                        {notifications &&
-                        notifications[name.group] > 0 &&
-                        notifications[name.group] !== groupID ? (
-                          <p className="dmNotification">
-                            {notifications[name.group]}
-                          </p>
-                        ) : null}
-                        <button onClick={() => handleContactChat(name.name)}>
-                          ...
-                        </button>
-                      </li>
-                    );
-                  })}
+                  {groupedContacts[letter]
+                    .filter((contact) =>
+                      contact.name
+                        .toLowerCase()
+                        .includes(contactsFilter.toLowerCase())
+                    )
+                    .map((name, indexTwo) => {
+                      return (
+                        <li
+                          onClick={() =>
+                            handleContactSelect(name.id, name.name)
+                          }
+                          className={
+                            selectedContact === name.id
+                              ? "contactInfo selectedContact"
+                              : "contactInfo"
+                          }
+                          key={index + name.name}
+                        >
+                          <p>{name.name}</p>
+                          {notifications &&
+                          notifications[name.group] > 0 &&
+                          notifications[name.group] !== groupID ? (
+                            <p className="dmNotification">
+                              {notifications[name.group]}
+                            </p>
+                          ) : null}
+                          <label htmlFor="contactsMore">
+                            <BsThreeDotsVertical />
+                          </label>
+                          <input
+                            id="contactsMore"
+                            onClick={() => handleContactChat(name.name)}
+                            type="button"
+                            className="sr-only"
+                          />
+                        </li>
+                      );
+                    })}
                 </ul>
               </li>
             );
