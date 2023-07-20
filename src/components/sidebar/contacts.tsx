@@ -175,11 +175,11 @@ const Contacts = () => {
       .from("user_logs")
       .select("group_id, last_visited")
       .match({ profile_id: currentUser })
-      .neq("group_id", groupID);
+      .neq("group_id", store.getState().group.id);
     const { data: messages, error: messageError } = await supabase
       .from("direct_messages")
       .select("private_group_id, created_at")
-      .neq("private_group_id", groupID);
+      .neq("private_group_id", store.getState().group.id);
     if (lastVisited && messages) {
       const counts: any = [];
       let notificationCount = 0;
@@ -190,7 +190,7 @@ const Contacts = () => {
         if (
           visitedObj &&
           message.created_at > visitedObj.last_visited &&
-          visitedObj.group_id !== groupID
+          visitedObj.group_id !== store.getState().group.id
         ) {
           if (!counts[message.private_group_id]) {
             counts[message.private_group_id] = 1;

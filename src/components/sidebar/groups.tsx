@@ -16,7 +16,7 @@ const Groups = () => {
   const [newGroupName, setNewGroupName] = useState("");
   const [groupFilter, setGroupFilter] = useState("");
   const dispatch = useAppDispatch();
-  const groupID = useAppSelector((state) => state.group.id);
+  const groupID = store.getState().group.id;
   const user = useAppSelector((state) => state.profile.id);
   const [notifications, setNotifications] = useState<any>([]);
   const [groupInvite, setGroupInvite] = useState(false);
@@ -57,16 +57,17 @@ const Groups = () => {
   };
 
   const getNotifications = async () => {
+    console.log(groupID)
+    console.log(store.getState().group.id)
     const { data: lastVisited, error: lastVisitedErr } = await supabase
       .from("user_logs")
       .select("group_id, last_visited")
       .match({ profile_id: user })
-      .neq("group_id", groupID);
+      .neq("group_id", store.getState().group.id);
     const { data: messages, error: messageError } = await supabase
       .from("messages")
       .select("group_id, created_at")
-      .neq("group_id", groupID);
-
+      .neq("group_id", store.getState().group.id);
     if (lastVisited && messages) {
       const counts: any = [];
 
@@ -78,7 +79,7 @@ const Groups = () => {
         if (
           visitedObj &&
           message.created_at > visitedObj.last_visited &&
-          visitedObj.group_id !== groupID
+          visitedObj.group_id !== store.getState().group.id
         ) {
           if (!counts[message.group_id]) {
             counts[message.group_id] = 1;
@@ -159,6 +160,7 @@ const Groups = () => {
     dispatch(setPrivate(false));
     dispatch(setGroupID(group.id));
     dispatch(setGroupName(group.name));
+    console.log(group.id)
   };
 
   return (
