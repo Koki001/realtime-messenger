@@ -6,7 +6,7 @@ import { AiFillPlaySquare } from "react-icons/ai";
 import EmojiPicker from "emoji-picker-react";
 
 import supabase from "@/utils/supabase";
-import { useAppSelector, useAppDispatch } from "@/store";
+import { useAppSelector, useAppDispatch, store } from "@/store";
 import { useState } from "react";
 import { setGroupID } from "@/store/groupSlice";
 const Input = () => {
@@ -25,25 +25,25 @@ const Input = () => {
       const { data, error } = await supabase
         .from("user_logs")
         .update({ last_visited: new Date().toISOString() })
-        .eq("group_id", groupID);
+        .eq("group_id", store.getState().group.id);
       console.log("logging ?");
     };
     if (typeof message === "string" && message.trim().length !== 0) {
       if (privateChat === false) {
         const { error } = await supabase.from("messages").insert({
           content: message,
-          group_id: groupID,
+          group_id: store.getState().group.id,
         });
-        dispatch(setGroupID(groupID));
+        // dispatch(setGroupID(groupID));
         form.reset();
         setInput("");
         updateLastVisited();
       } else if (privateChat === true) {
         const { error } = await supabase.from("direct_messages").insert({
           content: message,
-          private_group_id: groupID,
+          private_group_id: store.getState().group.id,
         });
-        dispatch(setGroupID(groupID));
+        // dispatch(setGroupID(groupID));
         form.reset();
         setInput("");
         updateLastVisited();
