@@ -24,7 +24,7 @@ const MessageScreen = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [profiles, setProfiles] = useState<Message[]>([]);
   const prevSenderRef = useRef<string | null>(null);
-  const [loader, setLoader] = useState(true);
+  const [loader, setLoader] = useState(false);
   const user: string = store.getState().profile.id;
   const containerRef = useRef<HTMLUListElement>(null);
   const formatTime = (messageDate: string) => {
